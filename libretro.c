@@ -58,8 +58,9 @@ typedef struct {
 char bios_filename[2048];
 static bool failed_init;
 static int num_cont = 4;
-static uint16_t frame_buffer[384*240];
-unsigned char *screenBuffer;
+
+unsigned short frame_buffer[384*240];
+
 void ATR800WriteSoundBuffer(uint8_t *buffer, unsigned int len);
 ATR5200ControllerState controllerStates[4];
 
@@ -341,7 +342,7 @@ bool retro_load_game(const struct retro_game_info *info)
     full_path = info->path;
 
 	strcpy(CFG_5200_filename, bios_filename);
-	
+	//Atari800_tv_mode = Atari800_TV_NTSC;
 	//Setup machine
 	Atari800_machine_type = Atari800_MACHINE_5200;
 	MEMORY_ram_size = 16;
@@ -496,8 +497,6 @@ void retro_init()
         strcat(bios_filename, bios_5200_rom);
         
 		fprintf(stderr, "5200 BIOS path: %s\n", bios_filename);
-        
-        screenBuffer = malloc(384 * 240 * 4);
     }
     else
     {
@@ -513,7 +512,6 @@ void retro_init()
 void retro_deinit(void)
 {
     Atari800_Exit(false);
-	free(screenBuffer);
 }
 
 void retro_reset(void)
@@ -531,6 +529,8 @@ void retro_run(void)
 	Atari800_Frame();
     
     //VIDEO
+    /*
+    //This this was 32-bit BGRA
 	UBYTE *source = (UBYTE *)(Screen_atari);
 	UBYTE *destination = screenBuffer;
 	for (int i = 0; i < Screen_HEIGHT; i++)
@@ -547,22 +547,22 @@ void retro_run(void)
 			source++;
 		}
 	}
-    video_cb(screenBuffer, Screen_WIDTH, Screen_HEIGHT, Screen_WIDTH * 2);
+    video_cb(screenBuffer, Screen_WIDTH, Screen_HEIGHT, Screen_WIDTH * 2);*/
     
-    /*
-    for(int i = 0; i != Screen_HEIGHT; i ++)
+    //Convert to 16-bit XRGB
+    UBYTE *source = (UBYTE *)(Screen_atari);
+    for(int i = 0; i < Screen_HEIGHT; i ++)
     {
-        for(int j = 0; j != Screen_WIDTH; j ++)
+        for(int j = 0; j < Screen_WIDTH; j ++)
         {
-            UBYTE *source = (UBYTE *)(Screen_atari)[i * Screen_WIDTH + j];
-            uint16_t color = ((int)source & 0x0000F8) >> 3; // B
-            color |= ((int)source & 0x00F800) >> 6; // G
-            color |= ((int)source & 0xF80000) >> 9; // R
+            unsigned short color = (Colours_GetB(*source) >> 3); // B
+            color |= (Colours_GetG(*source) >> 3) << 5; // G
+            color |= (Colours_GetR(*source) >> 3) << 10; // R
             frame_buffer[i * Screen_WIDTH + j] = color;
+            source++;
         }
     }
     video_cb(frame_buffer, Screen_WIDTH, Screen_HEIGHT, Screen_WIDTH * 2);
-    */
 	
     //AUDIO
     //TODO: fix
