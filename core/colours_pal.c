@@ -78,6 +78,9 @@ static void GeneratePalette(int colourtable[256])
 	double scaled_black_level = (double)COLOURS_PAL_setup.black_level / 255.0f;
 	double scaled_white_level = (double)COLOURS_PAL_setup.white_level / 255.0f;
 	const double gamma = 1 - COLOURS_PAL_setup.gamma / 2.0;
+	//double scaled_black_level = 0 / 255.0f;
+	//double scaled_white_level = 224 / 255.0f;
+	//const double gamma = 1 - 1 / 2.0;
 
 	/* NTSC luma multipliers from CGIA.PDF */
 	double luma_mult[16] = {

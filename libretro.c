@@ -342,7 +342,11 @@ bool retro_load_game(const struct retro_game_info *info)
     full_path = info->path;
 
 	strcpy(CFG_5200_filename, bios_filename);
-	//Atari800_tv_mode = Atari800_TV_NTSC;
+	
+	//Set our colors
+	Atari800_tv_mode = Atari800_TV_NTSC;
+	Colours_PreInitialise();
+	
 	//Setup machine
 	Atari800_machine_type = Atari800_MACHINE_5200;
 	MEMORY_ram_size = 16;

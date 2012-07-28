@@ -123,6 +123,8 @@ static void UpdateYIQTableFromGenerated(double yiq_table[768], const double star
 
 	double scaled_black_level = (double)COLOURS_NTSC_setup.black_level / 255.0;
 	double scaled_white_level = (double)COLOURS_NTSC_setup.white_level / 255.0;
+	//double scaled_black_level = 100 / 255.0;
+	//double scaled_white_level = 235 / 255.0;
 	const double gamma = 1 - COLOURS_NTSC_setup.gamma / 2.0;
 
 	/* NTSC luma multipliers from CGIA.PDF */
