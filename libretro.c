@@ -281,7 +281,7 @@ void retro_get_system_info(struct retro_system_info *info)
     memset(info, 0, sizeof(*info));
 	info->library_name = "Atari800";
 	info->library_version = "2.2.1";
-	info->need_fullpath = true;
+	info->need_fullpath = false;
 	info->valid_extensions = "a52|A52|bin|BIN";
 }
 
@@ -424,7 +424,27 @@ bool retro_load_game(const struct retro_game_info *info)
             //			UI_is_active = TRUE;
             //			CARTRIDGE_type = UI_SelectCartType(r);
             //			UI_is_active = FALSE;
-			CARTRIDGE_type = CARTRIDGE_5200_32;
+			//Tell Atari800 which 5200 cart type to load based on size
+            switch (info->size >> 10) {
+                case 40:
+                    CARTRIDGE_type = CARTRIDGE_5200_40; //bounty bob strikes back
+                    break;
+                case 32:
+                    CARTRIDGE_type = CARTRIDGE_5200_32;
+                    break;
+                //case 16:
+                //    CARTRIDGE_type = CARTRIDGE_5200_EE_16; //two chip: congo bongo, etc
+                case 16:
+                    CARTRIDGE_type = CARTRIDGE_5200_NS_16; //one chip: chop lifter, miner 2049er, etc
+                    break;
+                case 8:
+                    CARTRIDGE_type = CARTRIDGE_5200_8;
+                    break;
+                case 4:
+                    CARTRIDGE_type = CARTRIDGE_5200_4;
+                    break;
+            }
+			
 #else /* __PLUS */
 			CARTRIDGE_type = (CARTRIDGE_NONE == nCartType ? UI_SelectCartType(r) : nCartType);
 #endif /* __PLUS */
